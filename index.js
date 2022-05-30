@@ -24,7 +24,7 @@ app.get('/', (req, res) => {
 })
 
 app.post('/file', async (req, res) => {
-    console.log(req)
+    console.log(req.body)
     res.send(req.body)
 })
 
