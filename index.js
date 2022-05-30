@@ -23,7 +23,7 @@ app.get('/', (req, res) => {
     res.send({"data": "hello world"})
 })
 
-app.post('/file', upload.single('file'), async (req, res) => {
+app.post('/file', async (req, res) => {
     console.log(req)
     console.log('=======FILE=======')
     console.log(req.file)
