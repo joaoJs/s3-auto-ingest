@@ -9,7 +9,9 @@ const upload = multer({storage: storage, limits: {fieldSize: MAX_FILE_SIZE}})
 
 const app = express()
 
-const port = 3001
+require('dotenv').config()
+
+const port = process.env.PORT || 3001
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }))
