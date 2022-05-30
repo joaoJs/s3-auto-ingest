@@ -25,17 +25,7 @@ app.get('/', (req, res) => {
 
 app.post('/file', async (req, res) => {
     console.log(req)
-    // console.log('=======FILE=======')
-    // console.log(req.file)
-    const {buffer} = req || {}
-    const json = buffer && parse(buffer.toString(), {
-        delimiter: ',',
-        from: 2,
-        trim: true,
-        columns: true
-    })
-    console.log(json)
-    res.send(json)
+    res.send(req.body)
 })
 
 const startServer = () => {
