@@ -26,8 +26,9 @@ app.get('/', (req, res) => {
 app.post('/file', upload.single('file'), async (req, res) => {
     // console.log(req.body)
     // res.send(req.body)
-    console.log(req.file)
-    const json = parse(Body.toString(), {
+    // console.log(req.file)
+    const {buffer} = req.file
+    const json = parse(buffer.toString(), {
         delimiter: ',',
         from: 2,
         trim: true,
