@@ -1,11 +1,11 @@
 const express = require('express')
 const bodyParser = require('body-parser')
-const { parse } = require('csv-parse/sync')
+// const { parse } = require('csv-parse/sync')
 
-const MAX_FILE_SIZE = 15 * 1024 * 1024
-const multer = require('multer');
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage, limits: { fieldSize: MAX_FILE_SIZE } })
+// const MAX_FILE_SIZE = 15 * 1024 * 1024
+// const multer = require('multer');
+// const storage = multer.memoryStorage();
+// const upload = multer({ storage: storage, limits: { fieldSize: MAX_FILE_SIZE } })
 
 const app = express()
 
@@ -24,19 +24,8 @@ app.get('/', (req, res) => {
 })
 
 app.post('/file', upload.single('file'), async (req, res) => {
-    // console.log(req.body)
-    // res.send(req.body)
-    // console.log(req.file)
-    console.log(JSON.stringify(req.body))
-    const {buffer} = req.body
-    const json = parse(buffer.toString(), {
-        delimiter: ',',
-        from: 2,
-        trim: true,
-        columns: true
-    })
-    console.log(json)
-    res.send(json)
+    console.log(req.body)
+    res.send(req.body)
 })
 
 const startServer = () => {
