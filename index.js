@@ -29,14 +29,14 @@ app.post('/file', upload.single('file'), async (req, res) => {
     console.log(req.file)
 
 
-    const { buffer } = req.file || {};
+    // const { buffer } = req.file || {};
 
-    const json = parse(buffer.toString(), {
-        delimiter: ',',
-        from: 2,
-        trim: true,
-        columns: true
-    })
+    // const json = parse(buffer.toString(), {
+    //     delimiter: ',',
+    //     from: 2,
+    //     trim: true,
+    //     columns: true
+    // })
 
     console.log(json)
 
