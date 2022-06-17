@@ -25,7 +25,7 @@ app.get('/', (req, res) => {
 
 app.post('/file', upload.single('file'), async (req, res) => {
     console.log('request')
-    console.log(req)
+    console.log(req.file)
 
     const { buffer, mimetype } = req.file || {};
 
