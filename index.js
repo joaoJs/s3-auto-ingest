@@ -2,11 +2,6 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const { parse } = require('csv-parse/sync')
 
-const MAX_FILE_SIZE = 15 * 1024 * 1024
-const multer = require('multer');
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage, limits: { fieldSize: MAX_FILE_SIZE } })
-
 const app = express()
 
 require('dotenv').config()
@@ -23,27 +18,13 @@ app.get('/', (req, res) => {
     res.send({ "data": "hello world" })
 })
 
-app.post('/file', upload.single('file'), async (req, res) => {
-    console.log('request')
-    console.log(req.body)
-    console.log(req.file)
-
+app.post('/file', async (req, res) => {
     const json = parse(req.body.bufferStr, {
         delimiter: ',',
         from: 2,
         trim: true,
         columns: true
     })
-
-
-    // const { buffer } = req.file || {};
-
-    // const json = parse(buffer.toString(), {
-    //     delimiter: ',',
-    //     from: 2,
-    //     trim: true,
-    //     columns: true
-    // })
 
     console.log(json)
 
