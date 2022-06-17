@@ -32,7 +32,7 @@ app.post('/file', upload.single('file'), async (req, res) => {
         delimiter: ',',
         from: 2,
         trim: true,
-        column
+        columns: true
     })
 
 
