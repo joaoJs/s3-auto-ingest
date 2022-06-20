@@ -12,7 +12,7 @@ const port = process.env.PORT || 3001
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }))
 
 // parse application/json
-app.use(bodyParser.json())
+app.use(bodyParser.json({limit: '50mb'}))
 
 app.get('/', (req, res) => {
     res.send({ "data": "hello world" })
