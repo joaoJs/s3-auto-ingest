@@ -1,5 +1,5 @@
 const express = require('express')
-const bodyParser = require('body-parser')
+// const bodyParser = require('body-parser')
 const { parse } = require('csv-parse/sync')
 
 const app = express()
@@ -9,10 +9,10 @@ require('dotenv').config()
 const port = process.env.PORT || 3001
 
 // parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }))
+// app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }))
 
-// parse application/json
-app.use(bodyParser.json())
+// // parse application/json
+// app.use(bodyParser.json())
 
 app.get('/', (req, res) => {
     res.send({ "data": "hello world" })
