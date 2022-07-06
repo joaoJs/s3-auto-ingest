@@ -30,7 +30,7 @@ app.post('/file', async (req, res) => {
         let payload = JSON.parse(body)
 
         if (payload.Type === 'SubscriptionConfirmation') {
-            const promise = new Promise((resolve, reject) => {
+            const promise = new Promise( async (resolve, reject) => {
                 const url = payload.SubscribeURL
 
                 const response = await fetch(url)
