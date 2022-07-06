@@ -1,7 +1,5 @@
 const express = require('express')
 const bodyParser = require('body-parser')
-const { parse } = require('csv-parse/sync')
-const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
 const AWS = require('aws-sdk')
 const snsInstance = new AWS.SNS();
 
@@ -65,9 +63,13 @@ function confirmSubscription(
 }
 
 app.post('/file', async (req, res) => {
-    console.log(req)
+    console.log(JSON.stringify(req.body))
 
     await confirmSubscription(req.headers, req.body)
+
+    // get uploaded file from s3 using sns notification message 
+
+
 
 })
 
