@@ -2,6 +2,8 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const { parse } = require('csv-parse/sync')
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+const AWS = require('aws-sdk')
+const snsInstance = new AWS.SNS();
 
 const app = express()
 
@@ -15,38 +17,49 @@ app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }))
 // parse application/json
 app.use(bodyParser.json({ limit: '50mb' }))
 
+app.use(function(req, res, next) {
+    if (req.headers['x-amz-sns-message-type']) {
+        req.headers['content-type'] = 'application/json;charset=UTF-8';
+    }
+    next();
+});
+
+
 app.get('/', (req, res) => {
     res.send({ "data": "hello world" })
 })
 
-app.post('/file', async (req, res) => {
-    let body = ''
+function isConfirmSubscription(headers) {
+    return headers['x-amz-sns-message-type'] === 'SubscriptionConfirmation'
+}
 
-    req.on('data', (chunk) => {
-        body += chunk.toString()
-    })
+function confirmSubscription(
+    headers,
+    body,
+) {
 
-    req.on('end', async () => {
-        let payload = JSON.parse(body)
-
-        if (payload.Type === 'SubscriptionConfirmation') {
-            const promise = new Promise( async (resolve, reject) => {
-                const url = payload.SubscribeURL
-
-                const response = await fetch(url)
-                if (response.statusCode == 200) {
-                    console.log('Yess! We have accepted the confirmation from AWS')
-                    return resolve()
-                } else {
-                    return reject()
-                }
-            })
-
-            promise.then(() => {
-                res.end("ok")
-            })
+    return new Promise(((resolve, reject) =>{
+        if(!isConfirmSubscription(headers)){
+            return resolve('No SubscriptionConfirmation in sns headers')
         }
-    })
+
+        snsInstance.confirmSubscription({
+            TopicArn: headers['x-amz-sns-topic-arn'],
+            Token : body.Token
+        }, (err, res)=>{
+            console.log(err);
+            if(err){
+                return reject(err)
+            }
+            console.log('confirmation successfull')
+            return resolve(res.SubscriptionArn);
+        });
+    }))
+
+}
+
+app.post('/file', async (req, res) => {
+    await confirmSubscription(req.headers, req.body)
 })
 
 const startServer = () => {
