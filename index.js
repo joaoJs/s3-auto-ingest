@@ -68,8 +68,10 @@ app.post('/file', async (req, res) => {
     await confirmSubscription(req.headers, req.body)
 
     // get uploaded file from s3 using sns notification message 
-    const { s3 } = req.body.Message.Records[0]
-    console.log(s3)
+    const { Message } = req.body
+    console.log(Message.Records)
+
+    const s3 = Message.Records[0]
 
     const s3Instance = new AWS.S3()
     const s3Params = {
