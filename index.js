@@ -68,8 +68,8 @@ app.post('/file', async (req, res) => {
     await confirmSubscription(req.headers, req.body)
 
     // get uploaded file from s3 using sns notification message 
-    const { message } = req.body
-    console.log(message)
+    const { Message } = req.body
+    console.log(Message)
 })
 
 const startServer = () => {
