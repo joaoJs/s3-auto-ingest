@@ -59,8 +59,8 @@ function confirmSubscription(
 }
 
 app.post('/file', async (req, res) => {
-    console.log(req.headers)
-    console.log(req.body)
+    console.log(req)
+    // consoe.log(req)
     await confirmSubscription(req.headers, req.body)
 })
 
