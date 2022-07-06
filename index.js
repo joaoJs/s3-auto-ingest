@@ -68,7 +68,7 @@ app.post('/file', async (req, res) => {
     })
 
     console.log(body)
-    await confirmSubscription(req.headers, req.body)
+    // await confirmSubscription(req.headers, req.body)
 })
 
 const startServer = () => {
