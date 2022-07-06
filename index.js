@@ -17,13 +17,10 @@ app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }))
 // parse application/json
 app.use(bodyParser.json({ limit: '50mb' }))
 
-app.use(function(req, res, next) {
-    if (req.headers['x-amz-sns-message-type']) {
-        req.headers['content-type'] = 'application/json;charset=UTF-8';
-    }
+app.use((req, res, next) => {
+    req.headers['content-type'] = req.headers['content-type'] || 'application/json';
     next();
 });
-
 
 app.get('/', (req, res) => {
     res.send({ "data": "hello world" })
@@ -62,6 +59,7 @@ app.post('/file', async (req, res) => {
     console.log(req)
     
     await confirmSubscription(req.headers, req.body)
+
 })
 
 const startServer = () => {
