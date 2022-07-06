@@ -69,9 +69,14 @@ app.post('/file', async (req, res) => {
 
     // get uploaded file from s3 using sns notification message 
     const { Message } = req.body
-    console.log(JSON.parse(Message))
+    console.log(JSON.stringify(Message))
 
     const s3 = JSON.parse(Message)['Records'][0]
+
+    console.log(s3)
+
+    console.log(JSON.stringify(s3))
+    console.log(JSON.parse(s3))
 
     const s3Instance = new AWS.S3()
     const s3Params = {
