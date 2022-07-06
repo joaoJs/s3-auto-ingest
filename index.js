@@ -19,16 +19,17 @@ app.get('/', (req, res) => {
 })
 
 app.post('/file', async (req, res) => {
-    const json = parse(req.body.bufferStr, {
-        delimiter: ',',
-        from: 2,
-        trim: true,
-        columns: true
-    })
+    // const json = parse(req.body.bufferStr, {
+    //     delimiter: ',',
+    //     from: 2,
+    //     trim: true,
+    //     columns: true
+    // })
+    console.log(req)
 
-    console.log(json)
+    // console.log(json)
 
-    res.send(json)
+    // res.send(json)
 })
 
 const startServer = () => {
