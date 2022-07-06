@@ -1,6 +1,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const { parse } = require('csv-parse/sync')
+const fetch = require('node-fetch')
 
 const app = express()
 
@@ -12,24 +13,40 @@ const port = process.env.PORT || 3001
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }))
 
 // parse application/json
-app.use(bodyParser.json({limit: '50mb'}))
+app.use(bodyParser.json({ limit: '50mb' }))
 
 app.get('/', (req, res) => {
     res.send({ "data": "hello world" })
 })
 
 app.post('/file', async (req, res) => {
-    // const json = parse(req.body.bufferStr, {
-    //     delimiter: ',',
-    //     from: 2,
-    //     trim: true,
-    //     columns: true
-    // })
-    console.log(req)
+    let body = ''
 
-    // console.log(json)
+    req.on('data', (chunk) => {
+        body += chunk.toString()
+    })
 
-    // res.send(json)
+    req.on('end', async () => {
+        let payload = JSON.parse(body)
+
+        if (payload.Type === 'SubscriptionConfirmation') {
+            const promise = new Promise((resolve, reject) => {
+                const url = payload.SubscribeURL
+
+                const response = await fetch(url)
+                if (response.statusCode == 200) {
+                    console.log('Yess! We have accepted the confirmation from AWS')
+                    return resolve()
+                } else {
+                    return reject()
+                }
+            })
+
+            promise.then(() => {
+                res.end("ok")
+            })
+        }
+    })
 })
 
 const startServer = () => {
