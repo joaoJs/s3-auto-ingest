@@ -1,7 +1,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const { parse } = require('csv-parse/sync')
-const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
 const AWS = require('aws-sdk')
 const snsInstance = new AWS.SNS();
 
@@ -17,10 +17,19 @@ app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }))
 // parse application/json
 app.use(bodyParser.json({ limit: '50mb' }))
 
-app.use((req, res, next) => {
-    req.headers['content-type'] = req.headers['content-type'] || 'application/json';
-    next();
-});
+// app.use((req, res, next) => {
+//     req.headers['content-type'] = req.headers['content-type'] || 'application/json';
+//     next();
+// });
+
+app.use(
+    express.json({
+        type: [
+            'application/json',
+            'text/plain', // AWS sends this content-type for its messages/notifications
+        ],
+    })
+)
 
 app.get('/', (req, res) => {
     res.send({ "data": "hello world" })
@@ -35,17 +44,17 @@ function confirmSubscription(
     body,
 ) {
 
-    return new Promise(((resolve, reject) =>{
-        if(!isConfirmSubscription(headers)){
+    return new Promise(((resolve, reject) => {
+        if (!isConfirmSubscription(headers)) {
             return resolve('No SubscriptionConfirmation in sns headers')
         }
 
         snsInstance.confirmSubscription({
             TopicArn: headers['x-amz-sns-topic-arn'],
-            Token : body.Token
-        }, (err, res)=>{
+            Token: body.Token
+        }, (err, res) => {
             console.log(err);
-            if(err){
+            if (err) {
                 return reject(err)
             }
             console.log('confirmation successfull')
@@ -57,7 +66,7 @@ function confirmSubscription(
 
 app.post('/file', async (req, res) => {
     console.log(req)
-    
+
     await confirmSubscription(req.headers, req.body)
 
 })
