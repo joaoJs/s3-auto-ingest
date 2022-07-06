@@ -17,12 +17,12 @@ app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }))
 // parse application/json
 app.use(bodyParser.json({ limit: '50mb' }))
 
-// app.use(function(req, res, next) {
-//     if (req.headers['x-amz-sns-message-type']) {
-//         req.headers['content-type'] = 'application/json;charset=UTF-8';
-//     }
-//     next();
-// });
+app.use(function(req, res, next) {
+    if (req.headers['x-amz-sns-message-type']) {
+        req.headers['content-type'] = 'application/json;charset=UTF-8';
+    }
+    next();
+});
 
 
 app.get('/', (req, res) => {
