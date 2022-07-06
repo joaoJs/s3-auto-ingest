@@ -72,22 +72,19 @@ app.post('/file', async (req, res) => {
 
     const { s3 } = JSON.parse(Message)['Records'][0]
 
-    // s3 = JSON.stringify(s3)
-
-    console.log(s3)
-
     const s3Instance = new AWS.S3()
     const s3Params = {
         Bucket: s3.bucket.name,
         Key: s3.object.key
     }
 
-    s3Instance.getObject(s3Params, (err, res) => {
+    s3Instance.getObject(s3Params, (err, response) => {
         if (err === null) {
-            console.log(res)
-            res.send(res);
+            console.log(response)
+            res.send(response);
          } else {
-            res.status(500).send(err);
+            console.log(err)
+            res.send(err);
          }
     })
 
