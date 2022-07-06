@@ -9,6 +9,11 @@ require('dotenv').config()
 
 const port = process.env.PORT || 3001
 
+AWS.config.update({
+    accessKeyId: process.env.AWS_KEY_ID,
+    secretAccessKey: process.env.AWS_KEY,
+})
+
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }))
 
@@ -82,10 +87,10 @@ app.post('/file', async (req, res) => {
         if (err === null) {
             console.log(response)
             res.send(response);
-         } else {
+        } else {
             console.log(err)
             res.send(err);
-         }
+        }
     })
 
 })
