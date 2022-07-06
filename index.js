@@ -59,16 +59,9 @@ function confirmSubscription(
 }
 
 app.post('/file', async (req, res) => {
-    // console.log(req)
-    // consoe.log(req)
-    let body = ''
-
-    req.on('data', (chunk) => {
-        body += chunk.toString()
-    })
-
-    console.log(body)
-    // await confirmSubscription(req.headers, req.body)
+    console.log(req)
+    
+    await confirmSubscription(req.headers, req.body)
 })
 
 const startServer = () => {
