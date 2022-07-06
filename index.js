@@ -1,7 +1,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const { parse } = require('csv-parse/sync')
-import fetch from 'node-fetch'
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 const app = express()
 
