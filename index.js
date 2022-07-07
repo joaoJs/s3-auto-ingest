@@ -1,7 +1,8 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const AWS = require('aws-sdk')
-const snsInstance = new AWS.SNS();
+const { parse } = require('csv-parse/sync');
+const snsInstance = new AWS.SNS()
 
 const app = express()
 
@@ -20,11 +21,6 @@ app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }))
 // parse application/json
 app.use(bodyParser.json({ limit: '50mb' }))
 
-// app.use((req, res, next) => {
-//     req.headers['content-type'] = req.headers['content-type'] || 'application/json';
-//     next();
-// });
-
 app.use(
     express.json({
         type: [
@@ -38,14 +34,11 @@ app.get('/', (req, res) => {
     res.send({ "data": "hello world" })
 })
 
-function isConfirmSubscription(headers) {
+const isConfirmSubscription = (headers) => {
     return headers['x-amz-sns-message-type'] === 'SubscriptionConfirmation'
 }
 
-function confirmSubscription(
-    headers,
-    body,
-) {
+const confirmSubscription = (headers, body) => {
 
     return new Promise(((resolve, reject) => {
         if (!isConfirmSubscription(headers)) {
@@ -68,14 +61,12 @@ function confirmSubscription(
 }
 
 app.post('/file', async (req, res) => {
-    // console.log(JSON.stringify(req.body))
 
+    // confirm subscription to sns topic 
     await confirmSubscription(req.headers, req.body)
 
     // get uploaded file from s3 using sns notification message 
-    const { Message } = req.body
-
-    const { s3 } = JSON.parse(Message)['Records'][0]
+    const { s3 } = JSON.parse(req.body.Message)['Records'][0]
 
     const s3Instance = new AWS.S3()
     const s3Params = {
@@ -85,11 +76,21 @@ app.post('/file', async (req, res) => {
 
     s3Instance.getObject(s3Params, (err, response) => {
         if (err === null) {
-            console.log(response)
-            res.send(response);
+            // parse csv from response and insert json into mongodb
+            const { Body } = response
+            const json = parse(Body.toString(), {
+                delimiter: ',',
+                from: 2,
+                trim: true,
+                columns: true
+            })
+            let jsonRes = await fetch('https://s3-mongodb-poc.herokuapp.com/file', { method: 'POST', body: JSON.stringify(json), headers: { 'Content-Type': 'application/json' } })
+            jsonRes = await jsonRes.json()
+            console.log(jsonRes)
+            res.send(jsonRes)
         } else {
             console.log(err)
-            res.send(err);
+            res.send(err)
         }
     })
 
